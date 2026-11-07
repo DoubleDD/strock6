@@ -2,13 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "FreeCAD: 打开底座总成 (BaseAssembly)",
+            "label": "FreeCAD: 打开 Dob 底座总成 (DobAssembly)",
             "type": "shell",
             "command": "open",
             "args": [
                 "-a",
                 "FreeCAD",
-                "${workspaceFolder}/cad/01_Base/BaseAssembly.FCStd"
+                "${workspaceFolder}/cad/01_Dob/DobAssembly.FCStd"
             ],
             "problemMatcher": []
         },
