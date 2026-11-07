@@ -1,0 +1,50 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "FreeCAD: 打开底座总成 (BaseAssembly)",
+            "type": "shell",
+            "command": "open",
+            "args": [
+                "-a",
+                "FreeCAD",
+                "${workspaceFolder}/cad/01_Base/BaseAssembly.FCStd"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "FreeCAD: 启动（空文档）",
+            "type": "shell",
+            "command": "open",
+            "args": [
+                "-a",
+                "FreeCAD"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "导出目录: 在 Finder 中预览",
+            "type": "shell",
+            "command": "open",
+            "args": [
+                "${workspaceFolder}/exports"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "FreeCAD: 监控并归档旧备份",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "${workspaceFolder}/src/tools/freecad_backup_monitor.py"
+            ],
+            "isBackground": true,
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "panel": "dedicated"
+            },
+            "detail": "每个 FCStd 同目录只保留最新 FCBak，其余移入 cad/backup；手动启动，Ctrl+C 停止。"
+        }
+    ]
+}
