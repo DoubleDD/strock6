@@ -20,7 +20,7 @@
 - `已确认` 才能作为明确设计输入；`待定` 只作候选；`待实测` 需要实物数据；`派生` 由公式计算，不独立修改；`工程默认` 是实测/审核完成前选定的工作值，仅推进设计，不得作为最终加工依据。
 - 不得为了让模型闭合而自行编造尺寸。未知值保留变量、范围或待定状态。
 - 参数组织原则：基础输入仅限两类——实物实测尺寸、用户可直观判断的工艺量（板厚、最小壁宽、间隙等）；其余结构尺寸一律经派生链推出，不让用户直接裁决抽象总体尺寸。
-- `cad/interfaces/Interfaces.FCStd` 是 FreeCAD 模型间的跨模块尺寸分发层，不等于最新人工决策。只有参数表中的决策得到确认后，才按用户要求回写契约和模型。
+- `cad/91_Interfaces/Interfaces.FCStd` 是 FreeCAD 模型间的跨模块尺寸分发层，不等于最新人工决策。只有参数表中的决策得到确认后，才按用户要求回写契约和模型。
 - 闭合圆、圆环、圆孔和圆杆使用直径表示；模型所需半径由直径派生。未闭合圆弧直接使用半径表示。
 - 所有木板件统一引用参数表中的全局 `board_thick`，不得另设局部板厚真值。
 
@@ -47,13 +47,17 @@ freecadcmd路径：/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd
 
 - 正式产品模型统一位于 `cad/`；工具和自动化源码位于 `src/`；自动化测试位于 `tests/`，测试专用模型位于 `tests/fixtures/cad/`。
 - 正式总装和模块装配属于产品定义，留在 `cad/`；只有专为验证建立的测试装配才进入测试目录。
+- 模块装配放模块根部，模块专属零件放 `Parts/`，下一级总成放 `SubAssemblies/`，TechDraw 源文件放 `Drawings/`；没有实际文件的可选目录无需提前创建。
+- 标准件放 `cad/90_CommonParts/Standard/`，跨模块自制通用件放 `cad/90_CommonParts/SharedParts/`；契约层独立放在 `cad/91_Interfaces/`。
 - 一个 PartDesign Body 通常只表示一个单一连续固体；独立零件分别建模。
 - 新零件单独建档；组装图通过 App::Link 引用源件，不在组装图中绘制新零件几何。
 - 跨模块尺寸按项目规则通过契约层分发，避免模块间直接引用生成面或生成边。
 - 优先使用稳定的原点平面、Datum 和主控草图；修改后检查草图、特征、接口和干涉。
 - 模型树中所有对象的 `Label`（包括零件、Body、装配链接、基准、草图和特征）必须使用中文，且命名应自描述，能直接识别对象及其用途；不得使用无语义的默认名或晦涩缩写。草图中的命名约束（尺寸标注名称）同样必须使用自描述中文，改名时同步更新表达式引用。FCStd 文件名、内部 `Name` 和参数 `Alias` 不受此约束，仍按各自规则维护。
+- 模型保存后的默认视图必须显示所有零件 Body、最终特征和装配 `App::Link`；草图、Datum、Origin 和中间特征默认隐藏，骨架／CNC 排版等以草图为交付物的文档除外。批量修正使用 `src/tools/freecad_set_default_visibility.py`，并在 FreeCAD GUI 中保存和重开验证。
 - 不为了“整理”而重建或覆盖历史模型。用户未要求时，不修改 FCStd 或其他二进制模型。
-- FCStd、STEP、STL 等二进制资产遵循现有 Git LFS 和备份文件规则；模型历史备份归档到 `cad/backup/`。
+- FCStd、STEP、STL 等二进制资产遵循现有 Git LFS 和备份文件规则；模型历史备份归档到根目录 `backup/`，不进入 Git。
+- 导出物统一放 `exports/`，按 `step/`、`stl/`、`bom/`、`drawings/` 分类；不设置模块级 Export。
 - FreeCAD 建模遵循项目技能 `.agents/skills/freecad-modeling/SKILL.md`（强制操作规范：参数三层制、结构边界、骨架/TNP/Sketcher 规则、验证闭环）；方法论原理见 `wiki/methodology/结构设计与FreeCAD建模指南.md`，FreeCAD 脚本 API 见用户级 `freecad-scripts` 技能。修改建模规范时三处同步。
 
 ## 制造与交付约束

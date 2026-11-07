@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "/Applications/FreeCAD.app/Contents/Resources/bin/python",
+  "python.analysis.extraPaths": [
+    "/Applications/FreeCAD.app/Contents/Resources/lib"
+  ],
+  "python-envs.defaultEnvManager": "ms-python.python:system"
+}

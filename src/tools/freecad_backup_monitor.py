@@ -87,10 +87,15 @@ def parse_args():
     project_root = Path(__file__).resolve().parents[2]
     cad_root = project_root / "cad"
     parser = argparse.ArgumentParser(
-        description="每个 FCStd 仅在同目录保留最新 FCBak，其余移入 cad/backup。"
+        description="每个 FCStd 仅在同目录保留最新 FCBak，其余移入项目根目录 backup。"
     )
     parser.add_argument("--root", type=Path, default=cad_root, help="要监控的 CAD 模型目录")
-    parser.add_argument("--backup-dir", type=Path, help="归档目录，默认为 ROOT/backup")
+    parser.add_argument(
+        "--backup-dir",
+        type=Path,
+        default=project_root / "backup",
+        help="归档目录，默认为项目根目录 backup",
+    )
     parser.add_argument("--interval", type=float, default=2.0, help="轮询间隔秒数，默认 2")
     parser.add_argument("--once", action="store_true", help="只整理一次，不持续监控")
     return parser.parse_args()
@@ -99,11 +104,7 @@ def parse_args():
 def main():
     args = parse_args()
     root = args.root.expanduser().resolve()
-    backup_root = (
-        args.backup_dir.expanduser().resolve()
-        if args.backup_dir
-        else root / "backup"
-    )
+    backup_root = args.backup_dir.expanduser().resolve()
     if not root.is_dir():
         raise SystemExit(f"监控目录不存在：{root}")
     if args.interval <= 0:

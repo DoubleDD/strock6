@@ -1,5 +1,5 @@
 # FreeCAD 自动产生的历史备份与锁文件
-backup/
+/backup/
 *.FCStd1
 *.FCStd2
 *.FCStd3

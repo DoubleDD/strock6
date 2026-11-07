@@ -44,7 +44,7 @@
                 "reveal": "silent",
                 "panel": "dedicated"
             },
-            "detail": "每个 FCStd 同目录只保留最新 FCBak，其余移入 cad/backup；手动启动，Ctrl+C 停止。"
+            "detail": "每个 FCStd 同目录只保留最新 FCBak，其余移入项目根目录 backup；手动启动，Ctrl+C 停止。"
         }
     ]
 }

@@ -1,5 +1,12 @@
 # Wiki Log
 
+## [2026-11-07] refactor | CAD 模块正式分层
+- Moved: 模块专属零件进入 `Parts/`，下一级总成进入 `SubAssemblies/`；公共件与契约改为 `90_CommonParts/`、`91_Interfaces/`；试片和套合试环进入 `tests/fixtures/cad/`
+- Added: 根目录与 `cad/` README；13 份 DXF 归入 `exports/drawings/`；本地备份移至根目录 `backup/` 并保持 Git 忽略
+- Updated: 32 份 FCStd 的内部相对文件链接，以及备份监控、VS Code、AGENTS、建模技能和当前文档路径
+- Verified: 38 份模型只读重开和 recompute 无错误，148 个文件引用、Link、实体、草图和 ZIP 完整性通过；Markdown、Python、JSON 和备份归档样例通过
+- Scope: 保留所有 FCStd 文件名，未修改设计参数、几何或 T09～T17 状态
+
 ## [2026-11-07] refactor | 仓库目录结构迁移
 - Moved: 正式模型模块与契约迁入 `cad/`，模型备份迁入 `cad/backup/`；备份监控迁入 `src/tools/`；建立 `tests/` 与 `tests/fixtures/cad/` 测试边界
 - Updated: VS Code 任务、AGENTS、freecad-modeling 技能、当前文档模型链接、项目概览、命名规范、模块清单与 wiki 索引
@@ -393,3 +400,14 @@
 - Verified: 杆长、杆杆、杆环、夹块与杆/环/副镜/调焦板/压持扣干涉均为 0；25→30 mm 回归通过；总装 30 Link
 - Updated: 压持扣改为 50°/155°/305°，最小杆及夹块间隙约 11.16 mm；新增夹块整板 DXF，重导入 228 实体
 - Status: T10 待实物夹持和重复定位验证；T16 新增夹块整板，底座箱仍待设计
+
+## [2026-11-07] maintenance | 模型默认可见性与批量处理工具
+- Changed: 现行及测试共 38 份 FCStd 默认显示零件 Body、最终特征和装配 App::Link；非最终草图、基准和中间特征隐藏，骨架与 CNC 排版草图除外
+- Tool: 新增 `src/tools/freecad_set_default_visibility.py`，在 FreeCAD GUI 中批量保存并逐份重开验证；包含完整载入检查、几何签名、实体、草图、链接及 GuiDocument 检查
+- Verified: GUI 抽检 BasePlate、PrimarySupportAssembly、TotalAssembly 无隐藏零件；38 份 ZIP／GuiDocument 完整，Body／Link 可见性检查通过
+- Synchronized: `AGENTS.md`、项目建模技能、方法论指南与 `cad/README.md` 已同步默认可见性规则；不改变设计参数和阶段任务状态
+
+## [2026-11-07] fix | 隐藏装配链接源件的 Origin 基准
+- Cause: `PartDesign::Body.Group` 不包含 `Origin`，仅遍历 Body.Group 会漏掉原点、XYZ 基准轴和基准面
+- Updated: `src/tools/freecad_set_default_visibility.py` 已显式隐藏 `App::Origin` 及 `OriginFeatures`，并重新保存全部 38 份现行及测试模型
+- Verified: TotalAssembly 重开后无可见 Origin、无隐藏零件；全部 FCStd 的基准隐藏、Body／Link 显示、ZIP 与 GuiDocument 检查通过

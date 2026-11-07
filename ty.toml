@@ -1,0 +1,8 @@
+[environment]
+python = "/Applications/FreeCAD.app/Contents/Resources/bin/python"
+extra-paths = [
+    "/Applications/FreeCAD.app/Contents/Resources/lib",
+]
+
+[analysis]
+replace-imports-with-any = ["FreeCAD", "FreeCADGui"]
