@@ -8,6 +8,7 @@
 *.FCStd*~
 *.FCStd.lock
 *.~lock.*
+*.FCBak
 
 # 自动恢复与临时缓存
 *.FCRecovery
