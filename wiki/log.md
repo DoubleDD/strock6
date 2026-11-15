@@ -1,5 +1,11 @@
 # Wiki Log
 
+## [2026-11-12] revise | M42 延长筒外径实测回填与座孔派生更新
+- Measured: 用户实测 M42×0.75、长 10 mm 延长筒的筒身外径 44 mm；F-02 由 42／待定 改为 44／已确认
+- Updated: F-03 座孔由 42.3 派生为 44.3，F-04 旧反推依据作废；同步总体派生尺寸链、首轮接口冻结、T11 详细设计、T16 排版与 T08a 试片记录、FM-05 采集清单
+- Risk: 座孔 44.3 时孔壁至两条调节槽内缘仅余约 0.6 mm（由 F-09 槽距 50 与槽宽 4.5 决定，加宽板宽无效）；进入座孔的实际段落（筒身 44 或螺纹段约 42）仍需 FM-05 台阶与螺纹长度数据
+- Not written back: `FocuserMountPlate.FCStd` 与契约 `if_top_m42_hole_d` 仍为 42.3，整板 DXF 与 T08a 试片未重生成；T11／T16／T08a 保持待验证
+
 ## [2026-11-07] refactor | CAD 模块正式分层
 - Moved: 模块专属零件进入 `Parts/`，下一级总成进入 `SubAssemblies/`；公共件与契约改为 `90_CommonParts/`、`91_Interfaces/`；试片和套合试环进入 `tests/fixtures/cad/`
 - Added: 根目录与 `cad/` README；13 份 DXF 归入 `exports/drawings/`；本地备份移至根目录 `backup/` 并保持 Git 忽略
@@ -411,3 +417,31 @@
 - Cause: `PartDesign::Body.Group` 不包含 `Origin`，仅遍历 Body.Group 会漏掉原点、XYZ 基准轴和基准面
 - Updated: `src/tools/freecad_set_default_visibility.py` 已显式隐藏 `App::Origin` 及 `OriginFeatures`，并重新保存全部 38 份现行及测试模型
 - Verified: TotalAssembly 重开后无可见 Origin、无隐藏零件；全部 FCStd 的基准隐藏、Body／Link 显示、ZIP 与 GuiDocument 检查通过
+
+## [2026-11-14] prototype | 下环外置单夹块与向边中点收拢斜孔
+- Checked: 既有 OctBaseB 孔轴基本仅在径向竖直平面内倾斜，缺少朝向所在边中点的切向分量；通过 MCP 只读检查现行模型，未修改既有 FCStd 或契约
+- Derived: 参数表新增 T-30～T-34；按 25 mm 下孔距、当前上端 ±9 mm 错位和 4.5 mm 径向内缩、1250 mm 杆长计算，总倾角 4.088852°，径向／切向分量分别 1.818877°／3.664478°
+- Created: `cad/02_PrimarySupport/Parts/LowerRingClampPrototype.FCStd` 与 `src/freecad/lower_ring_clamp_prototype.py`；同一文档含八角环和 25×20×16 mm 夹块两个 Body，4 个缺口、8 个环孔及 2 个同轴夹块槽
+- Geometry: 原 20 mm 环壁不能直接再切 20 mm 深缺口，故将缺口放在原实际外轮廓之外新增区域，保留连续环壁；两孔圆心位于夹块靠环体长边两端
+- Verified: MCP GUI 保存重开和独立 freecadcmd 重算通过；两 Body 单一有效实体，10 个槽均实际去料，方向点积 1、孔心误差 0、孔距 25 mm、环块重叠 0；草图全约束且无冲突／冗余，孔深 25→26→25 mm 回归恢复，ZIP／GuiDocument 完整
+- Status: T09／T10／T08c 保持待验证；夹紧开口、紧固件、实物夹持和重复定位未关闭。`pytest tests/` 因环境未安装 pytest 无法执行，不记为测试通过
+
+
+## [2026-11-15] inspect | 主镜座总成只读干涉检查与防尘盖建议
+- Checked: 用户修改后的 PrimarySupportAssembly 含 11 个实体 Link；55 组两两检查无体积干涉，GUI 与独立 freecadcmd 磁盘重开均为有效实体，无无效对象；未修改或保存模型
+- Dimensions: 上环／镜座径向单边间隙 2 mm；光学面最高点至上环顶面约 3.7728 mm；支撑板高 48 mm；底托对镜座名义径向承托宽度 3 mm
+- Boundary: 支撑板实际紧固／胶合和镜座真实底面接触需核实；CLI 有 TopoShapeExpansion hasher mismatch 警告但本轮实体检查通过；实物调角螺钉最高点未纳入现有模型
+- Cover: 推荐上环顶面承托的轻量浅盖，不调整上环内孔或支撑板高度；Ø220 mm 为候选而非确认参数，额外净高由盖子隆起或垫圈解决
+- Status: T09 保持待验证；盖子正式尺寸待实物最高点和连接结构测量
+
+- Decision: M-16 确认普通 M4 孔不进入 CNC 模型／DXF，到货后按实物手工钻孔；辅助定位孔为例外。既有模型和历史 DXF 未自动清理，T16 生产输出时执行
+- Decision: R-19／R-20 确认底托内孔 Ø173.5 mm，镜座径向承托宽度 10 mm，主镜口径外径向余量 6.75 mm；未修改模型
+- Decision: E-12 选定完整八角薄板防尘盖＋磁吸防滑，覆盖环面、夹块与杆孔；不改上环内孔或支撑板高度。磁铁防脱、板厚和中央刚度待设计验证
+
+- Cover revision: 圆形浅沉台候选的 5 mm 径向托边可保留同一 CNC 刀具，但 5 mm 深沉台＋5 mm 齐平薄盖会使盖底低于当前光学面最高点约 1.2272 mm；E-12 转为圆形薄盖待定，沉台深度待实物净高校核，未修改模型
+
+- Model: R-21 确认支撑板高度50 mm；OctBaseB 高度约束已修改并命名，PrimarySupportAssembly 上环与夹块联动抬高2 mm。磁盘重开、55组干涉、上下接触和实体检查通过；5 mm齐平沉台的镜面名义余量0.7728 mm。T09待验证，pytest环境仍不可用
+
+- Clarified: 防尘盖名义链60／50／16 mm对应沉台前6 mm、5 mm沉台后1 mm；球面模型60.2272 mm对应5.7728／0.7728 mm，结论一致，未修改模型
+
+- Fix: TotalAssembly 磁盘保存版已移除错误嵌套的 Dob底座 AssemblyLink，Group 10→9；无关节或爆炸图直接依赖，源 DobAssembly 未改。独立重开无残留或无效对象；旧GUI进程未强制结束，卡死会话未保存改动不在离线结果中
